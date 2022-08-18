@@ -22,19 +22,19 @@ public class InMemoryItemStorage implements ItemStorage {
     }
 
     @Override
-    public Item create(long userId, Item item) {
+    public Item create(Item item) {
         item.setId(generateId());
-        item.setOwnerId(userId);
         items.put(item.getId(), item);
         return item;
     }
 
     @Override
-    public Item update(long userId, long itemId, Item item) {
+    public Item update(Item item) {
+        long itemId = item.getId();
         if (!items.containsKey(itemId)) {
             throw new NotFoundException("Предмет с таким id не найден");
         }
-        if (items.get(itemId).getOwnerId() != userId) {
+        if (items.get(itemId).getOwnerId() != item.getOwnerId()) {
             throw new WrongIdException("Неверный id пользователя");
         }
         if (item.getName() != null) {

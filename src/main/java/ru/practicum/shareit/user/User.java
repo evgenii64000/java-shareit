@@ -11,12 +11,13 @@ import javax.validation.constraints.NotNull;
  */
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id, email")
 public class User {
 
-    private long id;
+    private Long id;
     private String name;
     @Email
     @NotNull

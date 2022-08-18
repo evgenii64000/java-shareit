@@ -25,14 +25,14 @@ public class ItemController {
 
     @PostMapping
     public ItemDto postItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                            @RequestBody @Valid Item item) {
+                            @RequestBody @Valid ItemDto item) {
         return itemService.create(userId, item);
     }
 
     @PatchMapping("/{id}")
     public ItemDto patchItem(@RequestHeader("X-Sharer-User-Id") long userId,
                              @PathVariable long id,
-                             @RequestBody Item item) {
+                             @RequestBody ItemDto item) {
         return itemService.update(userId, id, item);
     }
 

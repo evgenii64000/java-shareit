@@ -6,9 +6,9 @@ import java.util.Collection;
 
 public interface ItemStorage {
 
-    Item create(long userId, Item item);
+    Item create(Item item);
 
-    Item update(long userId, long itemId, Item item);
+    Item update(Item item);
 
     Item getItemById(long itemId);
 

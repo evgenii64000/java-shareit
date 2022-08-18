@@ -52,7 +52,8 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public  User update(User user, long id) {
+    public  User update(User user) {
+        long id = user.getId();
         if (isUserInMemoryById(id)) {
             if (user.getEmail() != null) {
                 updateUserEmail(user, id);

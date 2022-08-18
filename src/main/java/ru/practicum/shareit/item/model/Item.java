@@ -10,13 +10,14 @@ import javax.validation.constraints.NotNull;
  */
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Item {
 
-    private long id;
-    private long ownerId;
+    private Long id;
+    private Long ownerId;
     @NotNull
     @NotBlank
     private String name;

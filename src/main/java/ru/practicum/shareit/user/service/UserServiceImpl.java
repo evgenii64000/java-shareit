@@ -3,9 +3,12 @@ package ru.practicum.shareit.user.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,18 +21,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(long id) {
-        return userStorage.getUserById(id);
+    public UserDto getUserById(long id) {
+        return UserMapper.toUserDto(userStorage.getUserById(id));
     }
 
     @Override
-    public User create(User user) {
-        return userStorage.create(user);
+    public UserDto create(UserDto userDto) {
+        User user = UserMapper.fromDtoToUser(userDto, null);
+        return UserMapper.toUserDto(userStorage.create(user));
     }
 
     @Override
-    public User update(User user, long id) {
-        return userStorage.update(user, id);
+    public UserDto update(UserDto userDto, long id) {
+        User user = UserMapper.fromDtoToUser(userDto, id);
+        return UserMapper.toUserDto(userStorage.update(user));
     }
 
     @Override
@@ -38,7 +43,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Collection<User> getAllUsers() {
-        return userStorage.getAllUsers();
+    public Collection<UserDto> getAllUsers() {
+        return userStorage.getAllUsers().stream()
+                .map(user -> UserMapper.toUserDto(user))
+                .collect(Collectors.toList());
     }
 }

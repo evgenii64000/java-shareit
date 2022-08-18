@@ -25,18 +25,20 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto create(long userId, Item item) {
+    public ItemDto create(long userId, ItemDto itemDto) {
         if (userStorage.isUserInMemoryById(userId)) {
-            return ItemMapper.toItemDto(itemStorage.create(userId, item));
+            Item item = ItemMapper.fromDtoToItem(itemDto, userId, null);
+            return ItemMapper.toItemDto(itemStorage.create(item));
         } else {
             throw new NotFoundException("Пользователь с таким id не найден");
         }
     }
 
     @Override
-    public ItemDto update(long userId, long itemId, Item item) {
+    public ItemDto update(long userId, long itemId, ItemDto itemDto) {
         if (userStorage.isUserInMemoryById(userId)) {
-            return ItemMapper.toItemDto(itemStorage.update(userId, itemId, item));
+            Item item = ItemMapper.fromDtoToItem(itemDto, userId, itemId);
+            return ItemMapper.toItemDto(itemStorage.update(item));
         } else {
             throw new NotFoundException("Пользователь с таким id не найден");
         }
