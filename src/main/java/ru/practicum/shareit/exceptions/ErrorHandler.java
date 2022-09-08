@@ -25,4 +25,20 @@ public class ErrorHandler {
     public String handleWrongIdException(final WrongIdException e) {
         return e.getMessage();
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleWrongUserException(final WrongUserException e) {return e.getMessage();}
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleItemUnavailableException(final ItemUnavailableException e) {return e.getMessage();}
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleWrongTimeException(final WrongTimeException e) {return e.getMessage();}
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleUnsupportedStateException(final UnsupportedStateException e) {return e.getMessage();}
 }

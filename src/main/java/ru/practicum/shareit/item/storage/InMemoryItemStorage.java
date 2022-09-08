@@ -34,9 +34,6 @@ public class InMemoryItemStorage implements ItemStorage {
         if (!items.containsKey(itemId)) {
             throw new NotFoundException("Предмет с таким id не найден");
         }
-        if (!items.get(itemId).getOwnerId().equals(item.getOwnerId())) {
-            throw new WrongIdException("Неверный id пользователя");
-        }
         if (item.getName() != null) {
             String newName = item.getName();
             items.get(itemId).setName(newName);
@@ -64,7 +61,7 @@ public class InMemoryItemStorage implements ItemStorage {
     @Override
     public Collection<Item> getUserItems(long userId) {
         return items.values().stream()
-                .filter(item -> item.getOwnerId() == userId)
+                .filter(item -> item.getOwner().getId() == userId)
                 .collect(Collectors.toSet());
     }
 

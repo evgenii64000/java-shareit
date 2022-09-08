@@ -3,19 +3,20 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    public UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
@@ -24,7 +25,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(long id) {
-        return UserMapper.toUserDto(userRepository.getById(id));
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            return UserMapper.toUserDto(user.get());
+        } else {
+            throw new NotFoundException("Пользователь с таким id не найден");
+        }
     }
 
     @Override
@@ -35,8 +41,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(UserDto userDto, long id) {
-        User user = UserMapper.fromDtoToUser(userDto, id);
-        return UserMapper.toUserDto(userRepository.save(user));
+        Optional<User> userToUpdate = userRepository.findById(id);
+        if (userToUpdate.isPresent()) {
+            User user = userToUpdate.get();
+            if (userDto.getEmail() != null) {
+                user.setEmail(userDto.getEmail());
+            }
+            if (userDto.getName() != null) {
+                user.setName(userDto.getName());
+            }
+            return UserMapper.toUserDto(userRepository.save(user));
+        } else {
+            throw new NotFoundException("Пользователь с таким id не найден");
+        }
     }
 
     @Override

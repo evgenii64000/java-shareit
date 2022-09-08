@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Table(name = "booking")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -23,17 +24,15 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "start")
+    @Column(name = "start_time")
     private LocalDateTime start;
-    @Column(name = "end")
+    @Column(name = "end_time")
     private LocalDateTime end;
-    @ManyToOne
-    @CollectionTable(name = "items", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "item_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
-    @ManyToOne
-    @CollectionTable(name = "users", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "booker_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booker_id", referencedColumnName = "id")
     private User booker;
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
