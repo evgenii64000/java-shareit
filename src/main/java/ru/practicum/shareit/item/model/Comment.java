@@ -7,12 +7,10 @@ import ru.practicum.shareit.user.User;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
-/**
- * // TODO .
- */
 @Entity
-@Table(name = "items")
+@Table(name = "comments")
 @Getter
 @Setter
 @Builder
@@ -20,26 +18,23 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Item {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+    @Column(name = "text")
+    @NotNull
+    @NotBlank
+    private String text;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
-    private User owner;
-    @Column(name = "name")
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    private Item item;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    private User author;
+    @Column(name = "created")
     @NotNull
-    @NotBlank
-    private String name;
-    @Column(name = "description")
-    @NotNull
-    @NotBlank
-    private String description;
-    @Column(name = "available")
-    @NotNull
-    private Boolean available;
-    @Column(name = "request_id")
-    private String request;
+    private LocalDateTime created;
 }

@@ -2,7 +2,9 @@ package ru.practicum.shareit.item.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoWithBooking;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
@@ -36,17 +38,25 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDto getItem(@PathVariable long id) {
-        return itemService.getItemById(id);
+    public ItemDtoWithBooking getItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                                      @PathVariable long id) {
+        return itemService.getItemById(id, userId);
     }
 
     @GetMapping
-    public Collection<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public Collection<ItemDtoWithBooking> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.getUserItems(userId);
     }
 
     @GetMapping("/search")
     public Collection<ItemDto> findItems(@RequestParam String text) {
         return itemService.findItems(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId,
+                                             @PathVariable long itemId,
+                                             @RequestBody @Valid CommentDto commentDto) {
+        return itemService.addComment(userId, itemId, commentDto);
     }
 }

@@ -3,8 +3,8 @@ package ru.practicum.shareit.booking.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingDtoFront;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.exceptions.NotFoundException;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -25,8 +25,8 @@ public class BookingController {
 
     @PostMapping
     public BookingDto postBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                  @RequestBody @Valid BookingDto bookingDto) {
-        return bookingService.createBooking(bookingDto, userId);
+                                  @RequestBody @Valid BookingDtoFront bookingDtoFront) {
+        return bookingService.createBooking(bookingDtoFront, userId);
     }
 
     @PatchMapping("/{bookingId}")
@@ -36,19 +36,19 @@ public class BookingController {
         return bookingService.updateBookingByUser(bookingId, userId, approved);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{bookingId}")
     public BookingDto getBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                 @PathVariable Long id) {
-        return bookingService.getBooking(userId, id);
+                                 @PathVariable Long bookingId) {
+        return bookingService.getBooking(userId, bookingId);
     }
 
-    @GetMapping("/bookings")
+    @GetMapping
     public Collection<BookingDto> getBookingsForUser(@RequestHeader("X-Sharer-User-Id") long userId,
                                                      @RequestParam(defaultValue = "ALL") String state) {
         return bookingService.getBookingsForUser(userId, state);
     }
 
-    @GetMapping("/bookings/owner")
+    @GetMapping("/owner")
     public Collection<BookingDto> getBookingsForOwner(@RequestHeader("X-Sharer-User-Id") long userId,
                                                      @RequestParam(defaultValue = "ALL") String state) {
         return bookingService.getBookingsForOwner(userId, state);
