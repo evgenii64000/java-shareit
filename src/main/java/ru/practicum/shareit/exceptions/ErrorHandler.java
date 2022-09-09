@@ -30,15 +30,21 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleWrongUserException(final WrongUserException e) {return e.getMessage();}
+    public String handleWrongUserException(final WrongUserException e) {
+        return e.getMessage();
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleItemUnavailableException(final ItemUnavailableException e) {return e.getMessage();}
+    public String handleItemUnavailableException(final ItemUnavailableException e) {
+        return e.getMessage();
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleWrongTimeException(final WrongTimeException e) {return e.getMessage();}
+    public String handleWrongTimeException(final WrongTimeException e) {
+        return e.getMessage();
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -48,5 +54,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleWrongStatusException(final WrongStatusException e) {return e.getMessage();}
+    public String handleWrongStatusException(final WrongStatusException e) {
+        return e.getMessage();
+    }
 }

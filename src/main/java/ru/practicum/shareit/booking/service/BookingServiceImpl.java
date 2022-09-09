@@ -7,7 +7,6 @@ import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoFront;
 import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.*;
 import ru.practicum.shareit.item.model.Item;
@@ -145,6 +144,7 @@ public class BookingServiceImpl implements BookingService {
                         .filter(booking -> booking.getStatus().name().equals("REJECTED"))
                         .collect(Collectors.toList());
                 break;
+
             default:
                 throw new UnsupportedStateException("Unknown state: " + state);
         }
