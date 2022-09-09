@@ -46,7 +46,7 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("Предмет с таким id не найден");
         }
         Item item = bookItem.get();
-        if (item.getOwner().getId() == userId) {
+        if (Objects.equals(item.getOwner().getId(), userId)) {
             throw new WrongUserException("Собственник не может бронировать свою вещь");
         }
         if (!item.getAvailable()) {
@@ -73,7 +73,7 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("Такой заявки на бронирование не найдено");
         }
         Booking booking = bookingToApprove.get();
-        if (booking.getItem().getOwner().getId() != ownerId) {
+        if (!Objects.equals(booking.getItem().getOwner().getId(), ownerId)) {
             throw new WrongUserException("Обновлять статус бронирования может только владелец вещи");
         }
         if (booking.getStatus().equals(BookingStatus.WAITING)) {
@@ -102,7 +102,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingToGet.get();
         Long ownerIdCheck = booking.getItem().getOwner().getId();
         Long bookerIdCheck = booking.getBooker().getId();
-        if (ownerIdCheck != userId && bookerIdCheck != userId) {
+        if (!Objects.equals(ownerIdCheck, userId) && !Objects.equals(bookerIdCheck, userId)) {
             throw new WrongUserException("Получить бронирование может только владелец вещи или создатель заявки");
         }
         return BookingMapper.toBookingDto(booking, booking.getItem(), booking.getBooker());
