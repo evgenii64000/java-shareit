@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoFront;
 import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.*;
 import ru.practicum.shareit.item.model.Item;
@@ -114,44 +115,34 @@ public class BookingServiceImpl implements BookingService {
         if (user.isEmpty()) {
             throw new NotFoundException("Пользователь с таким id не найден");
         }
-        List<Booking> bookings = bookingRepository.findAllByBookerId(userId);
+        List<Booking> bookings;
         LocalDateTime now = LocalDateTime.now();
-        switch (state) {
-            case "ALL":
-                break;
-            case "PAST":
-                bookings = bookings.stream()
-                        .filter(booking -> booking.getEnd().isBefore(now))
-                        .collect(Collectors.toList());
-                break;
-            case "FUTURE":
-                bookings = bookings.stream()
-                        .filter(booking -> booking.getStart().isAfter(now))
-                        .collect(Collectors.toList());
-                break;
-            case "CURRENT":
-                bookings = bookings.stream()
-                        .filter(booking -> booking.getStart().isBefore(now) && booking.getEnd().isAfter(now))
-                        .collect(Collectors.toList());
-                break;
-            case "WAITING":
-                bookings = bookings.stream()
-                        .filter(booking -> booking.getStatus().name().equals("WAITING"))
-                        .collect(Collectors.toList());
-                break;
-            case "REJECTED":
-                bookings = bookings.stream()
-                        .filter(booking -> booking.getStatus().name().equals("REJECTED"))
-                        .collect(Collectors.toList());
-                break;
-
-            default:
-                throw new UnsupportedStateException("Unknown state: " + state);
+        try {
+            switch (BookingState.valueOf(state)) {
+                case PAST:
+                    bookings = bookingRepository.findAllByBookerIdPast(userId, now);
+                    break;
+                case FUTURE:
+                    bookings = bookingRepository.findAllByBookerIdFuture(userId, now);
+                    break;
+                case CURRENT:
+                    bookings = bookingRepository.findAllByBookerIdCurrent(userId, now);
+                    break;
+                case WAITING:
+                case REJECTED:
+                    bookings = bookingRepository.findAllByBookerIdAndStatus(userId, state);
+                    break;
+                default:
+                    bookings = bookingRepository.findAllByBookerId(userId);
+                    break;
+            }
+            return bookings.stream()
+                    .map(booking -> BookingMapper.toBookingDto(booking, booking.getItem(), booking.getBooker()))
+                    .sorted((b1, b2) -> -b1.getStart().toInstant(ZoneOffset.UTC).compareTo(b2.getStart().toInstant(ZoneOffset.UTC)))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        } catch (IllegalArgumentException e) {
+            throw new UnsupportedStateException("Unknown state: " + state);
         }
-        return bookings.stream()
-                .map(booking -> BookingMapper.toBookingDto(booking, booking.getItem(), booking.getBooker()))
-                .sorted((b1, b2) -> -b1.getStart().toInstant(ZoneOffset.UTC).compareTo(b2.getStart().toInstant(ZoneOffset.UTC)))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -160,42 +151,32 @@ public class BookingServiceImpl implements BookingService {
         if (owner.isEmpty()) {
             throw new NotFoundException("Пользователь с таким id не найден");
         }
-        List<Booking> bookings = bookingRepository.findByOwnerId(userId);
+        List<Booking> bookings;
         LocalDateTime now = LocalDateTime.now();
-        switch (state) {
-            case "ALL":
-                break;
-            case "PAST":
-                bookings = bookings.stream()
-                        .filter(booking -> booking.getEnd().isBefore(now))
-                        .collect(Collectors.toList());
-                break;
-            case "FUTURE":
-                bookings = bookings.stream()
-                        .filter(booking -> booking.getStart().isAfter(now))
-                        .collect(Collectors.toList());
-                break;
-            case "CURRENT":
-                bookings = bookings.stream()
-                        .filter(booking -> booking.getStart().isBefore(now) && booking.getEnd().isAfter(now))
-                        .collect(Collectors.toList());
-                break;
-            case "WAITING":
-                bookings = bookings.stream()
-                        .filter(booking -> booking.getStatus().name().equals("WAITING"))
-                        .collect(Collectors.toList());
-                break;
-            case "REJECTED":
-                bookings = bookings.stream()
-                        .filter(booking -> booking.getStatus().name().equals("REJECTED"))
-                        .collect(Collectors.toList());
-                break;
-            default:
-                throw new UnsupportedStateException("Unknown state: " + state);
+        try {
+            switch (BookingState.valueOf(state)) {
+                case PAST:
+                    bookings = bookingRepository.findAllByOwnerPast(userId, now);
+                    break;
+                case FUTURE:
+                    bookings = bookingRepository.findAllByOwnerFuture(userId, now);
+                    break;
+                case CURRENT:
+                    bookings = bookingRepository.findAllByOwnerCurrent(userId, now);
+                    break;
+                case WAITING:
+                case REJECTED:
+                    bookings = bookingRepository.findAllByOwnerStatus(userId, state);
+                    break;
+                default:
+                    bookings = bookingRepository.findByOwnerId(userId);
+            }
+            return bookings.stream()
+                    .map(booking -> BookingMapper.toBookingDto(booking, booking.getItem(), booking.getBooker()))
+                    .sorted((b1, b2) -> -b1.getStart().toInstant(ZoneOffset.UTC).compareTo(b2.getStart().toInstant(ZoneOffset.UTC)))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        } catch (IllegalArgumentException e) {
+            throw new UnsupportedStateException("Unknown state: " + state);
         }
-        return bookings.stream()
-                .map(booking -> BookingMapper.toBookingDto(booking, booking.getItem(), booking.getBooker()))
-                .sorted((b1, b2) -> -b1.getStart().toInstant(ZoneOffset.UTC).compareTo(b2.getStart().toInstant(ZoneOffset.UTC)))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }
