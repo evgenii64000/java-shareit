@@ -116,7 +116,7 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("Пользователь с таким id не найден");
         }
         List<Booking> bookings;
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now().withNano(0);
         try {
             switch (BookingState.valueOf(state)) {
                 case PAST:
@@ -152,7 +152,7 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("Пользователь с таким id не найден");
         }
         List<Booking> bookings;
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now().withNano(0);
         try {
             switch (BookingState.valueOf(state)) {
                 case PAST:
