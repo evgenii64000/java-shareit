@@ -1,6 +1,11 @@
 package ru.practicum.shareit.item.dto;
 
+import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.User;
+
+import java.util.List;
+import java.util.Optional;
 
 public class ItemMapper {
 
@@ -13,14 +18,36 @@ public class ItemMapper {
                 .build();
     }
 
-    public static Item fromDtoToItem(ItemDto itemDto, Long userId, Long id) {
+    public static Item fromDtoToItem(ItemDto itemDto, User owner, Long id) {
         return Item.builder()
                 .id(id)
-                .ownerId(userId)
+                .owner(owner)
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
                 .build();
     }
 
+    public static ItemDtoWithBooking toItemDtoWithBooking(Item item, BookingInfo next, BookingInfo last, List<CommentDto> commentDtos) {
+        return ItemDtoWithBooking.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .nextBooking(next)
+                .lastBooking(last)
+                .comments(commentDtos)
+                .build();
+    }
+
+    public static BookingInfo toBookingInfo(Optional<Booking> book) {
+        if (book.isPresent()) {
+            return BookingInfo.builder()
+                    .id(book.get().getId())
+                    .bookerId(book.get().getBooker().getId())
+                    .build();
+        } else {
+            return null;
+        }
+    }
 }
