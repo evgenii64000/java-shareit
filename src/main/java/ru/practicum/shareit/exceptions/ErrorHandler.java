@@ -57,4 +57,10 @@ public class ErrorHandler {
     public String handleWrongStatusException(final WrongStatusException e) {
         return e.getMessage();
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleWrongParameterException(final WrongParameterException e) {
+        return e.getMessage();
+    }
 }

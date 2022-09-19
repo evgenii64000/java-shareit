@@ -13,6 +13,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.requests.ItemRequest;
+import ru.practicum.shareit.requests.repository.RequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -27,24 +29,41 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
 
     @Autowired
     public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository,
-                           BookingRepository bookingRepository, CommentRepository commentRepository) {
+                           BookingRepository bookingRepository, CommentRepository commentRepository,
+                           RequestRepository requestRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.requestRepository = requestRepository;
     }
 
     @Override
     public ItemDto create(long userId, ItemDto itemDto) {
         Optional<User> userOwner = userRepository.findById(userId);
-        if (userOwner.isPresent()) {
-            Item item = ItemMapper.fromDtoToItem(itemDto, userOwner.get(), null);
-            return ItemMapper.toItemDto(itemRepository.save(item));
-        } else {
+        if (userOwner.isEmpty()) {
             throw new NotFoundException("Пользователь с таким id не найден");
+        }
+        User owner = userOwner.get();
+        if (itemDto.getRequestId() == null) {
+            Item item = ItemMapper.fromDtoToItem(itemDto, owner, null, null);
+            ItemDto itemDtoToReturn = ItemMapper.toItemDto(itemRepository.save(item));
+            itemDtoToReturn.setRequestId(null);
+            return itemDtoToReturn;
+        } else {
+            Optional<ItemRequest> itemRequestOptional = requestRepository.findById(itemDto.getRequestId());
+            if (itemRequestOptional.isEmpty()) {
+                throw new NotFoundException("Запрос с таким id не найден");
+            }
+            ItemRequest request = itemRequestOptional.get();
+            Item item = ItemMapper.fromDtoToItem(itemDto, owner, null, request);
+            ItemDto itemDtoToReturn = ItemMapper.toItemDto(itemRepository.save(item));
+            itemDtoToReturn.setRequestId(request.getId());
+            return itemDtoToReturn;
         }
     }
 
@@ -107,7 +126,7 @@ public class ItemServiceImpl implements ItemService {
                     .filter(booking -> booking.getStart().isBefore(now))
                     .findFirst();
             BookingInfo lastInfo = ItemMapper.toBookingInfo(last);
-           return ItemMapper.toItemDtoWithBooking(item, nextInfo, lastInfo, commentDtos);
+            return ItemMapper.toItemDtoWithBooking(item, nextInfo, lastInfo, commentDtos);
         }
     }
 
@@ -119,7 +138,7 @@ public class ItemServiceImpl implements ItemService {
         }
         User owner = userOwner.get();
         LocalDateTime now = LocalDateTime.now();
-        List<Item> items =  itemRepository.findAllByOwner(owner);
+        List<Item> items = itemRepository.findAllByOwner(owner);
         List<ItemDtoWithBooking> result = new ArrayList<>();
         for (Item item : items) {
             List<Booking> bookings = bookingRepository.findAllByItem_Id(item.getId());
