@@ -77,7 +77,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (from < 0 || size < 0) {
             throw new WrongParameterException("Неправильные параметры запроса");
         }
-        return requestRepository.findAllByRequestorNot(user, PageRequest.of(from, size, Sort.by("created"))).stream()
+        return requestRepository.findAllByRequestorNot(user, PageRequest.of(from / size, size,
+                        Sort.by("created").descending())).stream()
                 .map(request -> ItemRequestMapper.toDtoRequest(request))
                 .peek(requestDto -> getAnswers(requestDto))
                 .collect(Collectors.toList());

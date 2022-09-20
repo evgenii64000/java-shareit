@@ -1,13 +1,12 @@
 package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.exceptions.WrongIdException;
-import ru.practicum.shareit.exceptions.WrongTimeException;
-import ru.practicum.shareit.exceptions.WrongUserException;
+import ru.practicum.shareit.exceptions.*;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -131,14 +130,17 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDtoWithBooking> getUserItems(long userId) {
+    public Collection<ItemDtoWithBooking> getUserItems(long userId, Integer from, Integer size) {
         Optional<User> userOwner = userRepository.findById(userId);
         if (userOwner.isEmpty()) {
             throw new NotFoundException("Пользователь с таким id не найден");
         }
         User owner = userOwner.get();
+        if (from < 0 || size < 0) {
+            throw new WrongParameterException("Неправильные параметры запроса");
+        }
         LocalDateTime now = LocalDateTime.now();
-        List<Item> items = itemRepository.findAllByOwner(owner);
+        Page<Item> items = itemRepository.findAllByOwner(owner, PageRequest.of(from / size, size));
         List<ItemDtoWithBooking> result = new ArrayList<>();
         for (Item item : items) {
             List<Booking> bookings = bookingRepository.findAllByItem_Id(item.getId());
@@ -165,11 +167,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDto> findItems(String text) {
+    public Collection<ItemDto> findItems(String text, Integer from, Integer size) {
+        if (from < 0 || size < 0) {
+            throw new WrongParameterException("Неправильные параметры запроса");
+        }
         if (text.isBlank()) {
             return Collections.emptyList();
         } else {
-            return itemRepository.findByNameAndDescription(text, text).stream()
+            return itemRepository.findByNameAndDescription(text, text, PageRequest.of(from / size, size)).stream()
                     .map(item -> ItemMapper.toItemDto(item))
                     .collect(Collectors.toSet());
         }
