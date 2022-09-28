@@ -13,7 +13,7 @@ public class UserMapperTest {
             .id(1L)
             .email("test@mail")
             .name("testName")
-            .build();;
+            .build();
     private final UserDto testUserDto = UserDto.builder()
             .id(1L)
             .email("test@mail")

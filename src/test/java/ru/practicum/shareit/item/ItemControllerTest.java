@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import ru.practicum.shareit.item.service.ItemService;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
