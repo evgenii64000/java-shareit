@@ -129,8 +129,7 @@ public class ItemServiceImplTest {
     @Test
     public void testUpdateWrongItem() {
         try {
-            userService.create(userDto);
-            itemDto = itemService.create(userDto.getId(), itemDto);
+            userDto = userService.create(userDto);
             itemService.update(userDto.getId(), 200L, itemDto);
         } catch (Exception e) {
             Assertions.assertEquals("Предмет с таким id не найден", e.getMessage());
