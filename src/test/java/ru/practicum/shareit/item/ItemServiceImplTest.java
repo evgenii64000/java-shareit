@@ -259,7 +259,7 @@ public class ItemServiceImplTest {
         itemDto = itemService.create(owner.getId(), itemDto);
         BookingDtoFront booking = BookingDtoFront.builder()
                 .itemId(itemDto.getId())
-                .start(LocalDateTime.now().plusNanos(1000000L))
+                .start(LocalDateTime.now().plusNanos(50000000L))
                 .end(LocalDateTime.now().plusSeconds(1L))
                 .build();
         bookingService.createBooking(booking, booker.getId());
