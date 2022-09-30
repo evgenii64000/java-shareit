@@ -56,8 +56,8 @@ public class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class))
-                .andExpect(jsonPath("$.start", is(bookingDto.getStart().toString())))
-                .andExpect(jsonPath("$.end", is(bookingDto.getEnd().toString())));
+                .andExpect(jsonPath("$.start", equalTo(bookingDto.getStart().toString())))
+                .andExpect(jsonPath("$.end", equalTo(bookingDto.getEnd().toString())));
     }
 
     @Test
@@ -73,8 +73,8 @@ public class BookingControllerTest {
                         .param("approved", "true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class))
-                .andExpect(jsonPath("$.start", is(bookingDto.getStart().toString())))
-                .andExpect(jsonPath("$.end", is(bookingDto.getEnd().toString())));
+                .andExpect(jsonPath("$.start", equalTo(bookingDto.getStart().toString())))
+                .andExpect(jsonPath("$.end", equalTo(bookingDto.getEnd().toString())));
     }
 
     @Test
@@ -89,8 +89,8 @@ public class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class))
-                .andExpect(jsonPath("$.start", is(bookingDto.getStart().toString())))
-                .andExpect(jsonPath("$.end", is(bookingDto.getEnd().toString())));
+                .andExpect(jsonPath("$.start", equalTo(bookingDto.getStart().toString())))
+                .andExpect(jsonPath("$.end", equalTo(bookingDto.getEnd().toString())));
     }
 
     @Test
