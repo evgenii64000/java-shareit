@@ -163,17 +163,9 @@
 							<configuration>
 								<excludes>
 									<exclude>ru/practicum/shareit/booking/dto/BookingMapper.class</exclude>
-								</excludes>
-								<excludes>
 									<exclude>ru/practicum/shareit/item/dto/ItemMapper.class</exclude>
-								</excludes>
-								<excludes>
 									<exclude>ru/practicum/shareit/item/dto/CommentMapper.class</exclude>
-								</excludes>
-								<excludes>
 									<exclude>ru/practicum/shareit/requests/dto/ItemRequestMapper.class</exclude>
-								</excludes>
-								<excludes>
 									<exclude>ru/practicum/shareit/exceptions/ErrorHandler.class</exclude>
 								</excludes>
 								<rules>

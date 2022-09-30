@@ -1,14 +1,19 @@
 package ru.practicum.shareit.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.user.controller.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -21,16 +26,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = UserController.class)
+@ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
 
-    @MockBean
     UserController userController;
+    @Mock
+    UserService userService;
 
     @Autowired
-    ObjectMapper mapper;
+    ObjectMapper mapper = new ObjectMapper();
 
-    @Autowired
     private MockMvc mvc;
 
     private UserDto userDto = UserDto.builder()
@@ -39,9 +44,15 @@ public class UserControllerTest {
             .email("test@mail")
             .build();
 
+    @BeforeEach
+    void setUp() {
+        userController = new UserController(userService);
+        mvc = MockMvcBuilders.standaloneSetup(userController).build();
+    }
+
     @Test
     public void testGetUser() throws Exception {
-        when(userController.getUser(anyLong()))
+        Mockito.when(userService.getUserById(anyLong()))
                 .thenReturn(userDto);
 
         mvc.perform(get("/users/{userId}", 1L)
@@ -56,7 +67,7 @@ public class UserControllerTest {
 
     @Test
     public void testPostUser() throws Exception {
-        when(userController.postUser(any()))
+        when(userService.create(any()))
                 .thenReturn(userDto);
 
         mvc.perform(post("/users")
@@ -72,7 +83,7 @@ public class UserControllerTest {
 
     @Test
     public void testGetUsers() throws Exception {
-        when(userController.getUsers())
+        when(userService.getAllUsers())
                 .thenReturn(List.of(userDto));
 
         mvc.perform(get("/users")
@@ -96,7 +107,7 @@ public class UserControllerTest {
 
     @Test
     public void testUpdateUser() throws Exception {
-        when(userController.updateUser(anyLong(), any()))
+        when(userService.update(any(), anyLong()))
                 .thenReturn(userDto);
 
         mvc.perform(patch("/users/{userId}", 1L)

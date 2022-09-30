@@ -1,13 +1,17 @@
 package ru.practicum.shareit.requests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.requests.dto.ItemRequestDto;
+import ru.practicum.shareit.requests.service.ItemRequestService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -20,14 +24,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = ItemRequestController.class)
+@ExtendWith(MockitoExtension.class)
 public class ItemRequestControllerTest {
 
-    @MockBean
     private ItemRequestController requestController;
+    @Mock
+    private ItemRequestService requestService;
     @Autowired
-    ObjectMapper mapper;
-    @Autowired
+    ObjectMapper mapper = new ObjectMapper();
     private MockMvc mvc;
 
     private ItemRequestDto requestDto = ItemRequestDto.builder()
@@ -35,9 +39,15 @@ public class ItemRequestControllerTest {
             .description("testDescription")
             .build();
 
+    @BeforeEach
+    void setUp() {
+        requestController = new ItemRequestController(requestService);
+        mvc = MockMvcBuilders.standaloneSetup(requestController).build();
+    }
+
     @Test
     public void testPostRequest() throws Exception {
-        when(requestController.postRequest(1L, requestDto))
+        when(requestService.createRequest(1L, requestDto))
                 .thenReturn(requestDto);
 
         mvc.perform(post("/requests")
@@ -53,7 +63,7 @@ public class ItemRequestControllerTest {
 
     @Test
     public void testGetRequests() throws Exception {
-        when(requestController.getRequests(1L))
+        when(requestService.getRequests(1L))
                 .thenReturn(List.of(requestDto));
 
         mvc.perform(get("/requests")
@@ -69,7 +79,7 @@ public class ItemRequestControllerTest {
 
     @Test
     public void testGetUsersRequests() throws Exception {
-        when(requestController.getUsersRequests(1L, 0, 20))
+        when(requestService.getUsersRequests(1L, 0, 20))
                 .thenReturn(List.of(requestDto));
 
         mvc.perform(get("/requests/all")
@@ -85,7 +95,7 @@ public class ItemRequestControllerTest {
 
     @Test
     public void testGetRequest() throws Exception {
-        when(requestController.getRequest(1L, 1L))
+        when(requestService.getRequest(1L, 1L))
                 .thenReturn(requestDto);
 
         mvc.perform(get("/requests/{requestId}", 1L)

@@ -1,15 +1,21 @@
 package ru.practicum.shareit.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.booking.controller.BookingController;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoFront;
+import ru.practicum.shareit.booking.service.BookingService;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -21,14 +27,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = BookingController.class)
+@ExtendWith(MockitoExtension.class)
 public class BookingControllerTest {
 
-    @MockBean
     private BookingController bookingController;
+    @Mock
+    private BookingService bookingService;
     @Autowired
-    ObjectMapper mapper;
-    @Autowired
+    ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private MockMvc mvc;
 
     private BookingDtoFront bookingDtoFront = BookingDtoFront.builder()
@@ -43,9 +49,15 @@ public class BookingControllerTest {
             .end(bookingDtoFront.getEnd())
             .build();
 
+    @BeforeEach
+    void setUp() {
+        bookingController = new BookingController(bookingService);
+        mvc = MockMvcBuilders.standaloneSetup(bookingController).build();
+    }
+
     @Test
     public void testPostBooking() throws Exception {
-        when(bookingController.postBooking(1L, bookingDtoFront))
+        Mockito.when(bookingService.createBooking(bookingDtoFront, 1L))
                 .thenReturn(bookingDto);
 
         mvc.perform(post("/bookings")
@@ -55,14 +67,12 @@ public class BookingControllerTest {
                         .header("X-Sharer-User-Id", 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class))
-                .andExpect(jsonPath("$.start", equalTo(bookingDto.getStart().toString())))
-                .andExpect(jsonPath("$.end", equalTo(bookingDto.getEnd().toString())));
+                .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class));
     }
 
     @Test
     public void testPatchOwnerBooking() throws Exception {
-        when(bookingController.patchOwnerBooking(1L, 1L, true))
+        when(bookingService.updateBookingByUser(1L, 1L, true))
                 .thenReturn(bookingDto);
 
         mvc.perform(patch("/bookings/{bookingId}", 1L)
@@ -72,14 +82,12 @@ public class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .param("approved", "true"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class))
-                .andExpect(jsonPath("$.start", equalTo(bookingDto.getStart().toString())))
-                .andExpect(jsonPath("$.end", equalTo(bookingDto.getEnd().toString())));
+                .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class));
     }
 
     @Test
     public void testGetBooking() throws Exception {
-        when(bookingController.getBooking(1L, 1L))
+        when(bookingService.getBooking(1L, 1L))
                 .thenReturn(bookingDto);
 
         mvc.perform(get("/bookings/{bookingId}", 1L)
@@ -88,14 +96,12 @@ public class BookingControllerTest {
                         .header("X-Sharer-User-Id", 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class))
-                .andExpect(jsonPath("$.start", equalTo(bookingDto.getStart().toString())))
-                .andExpect(jsonPath("$.end", equalTo(bookingDto.getEnd().toString())));
+                .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class));
     }
 
     @Test
     public void testGetBookingsForUser() throws Exception {
-        when(bookingController.getBookingsForUser(1L, "ALL", 0, 20))
+        when(bookingService.getBookingsForUser(1L, "ALL", 0, 20))
                 .thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings")
@@ -105,14 +111,12 @@ public class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(bookingDto.getId()), Long.class))
-                .andExpect(jsonPath("$[0].start", equalTo(bookingDto.getStart().toString())))
-                .andExpect(jsonPath("$[0].end", equalTo(bookingDto.getEnd().toString())));
+                .andExpect(jsonPath("$[0].id", is(bookingDto.getId()), Long.class));
     }
 
     @Test
     public void testGetBookingsForOwner() throws Exception {
-        when(bookingController.getBookingsForOwner(1L, "ALL", 0, 20))
+        when(bookingService.getBookingsForOwner(1L, "ALL", 0, 20))
                 .thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings/owner")
@@ -122,8 +126,6 @@ public class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(bookingDto.getId()), Long.class))
-                .andExpect(jsonPath("$[0].start", equalTo(bookingDto.getStart().toString())))
-                .andExpect(jsonPath("$[0].end", equalTo(bookingDto.getEnd().toString())));
+                .andExpect(jsonPath("$[0].id", is(bookingDto.getId()), Long.class));
     }
 }
