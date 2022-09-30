@@ -45,7 +45,7 @@ public class BookingControllerTest {
 
     @Test
     public void testPostBooking() throws Exception {
-        when(bookingController.postBooking(1l, bookingDtoFront))
+        when(bookingController.postBooking(1L, bookingDtoFront))
                 .thenReturn(bookingDto);
 
         mvc.perform(post("/bookings")
@@ -62,7 +62,7 @@ public class BookingControllerTest {
 
     @Test
     public void testPatchOwnerBooking() throws Exception {
-        when(bookingController.patchOwnerBooking(1l, 1l, true))
+        when(bookingController.patchOwnerBooking(1L, 1L, true))
                 .thenReturn(bookingDto);
 
         mvc.perform(patch("/bookings/{bookingId}", 1L)
@@ -79,7 +79,7 @@ public class BookingControllerTest {
 
     @Test
     public void testGetBooking() throws Exception {
-        when(bookingController.getBooking(1l, 1l))
+        when(bookingController.getBooking(1L, 1L))
                 .thenReturn(bookingDto);
 
         mvc.perform(get("/bookings/{bookingId}", 1L)
@@ -95,7 +95,7 @@ public class BookingControllerTest {
 
     @Test
     public void testGetBookingsForUser() throws Exception {
-        when(bookingController.getBookingsForUser(1l, "ALL", 0, 20))
+        when(bookingController.getBookingsForUser(1L, "ALL", 0, 20))
                 .thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings")
@@ -112,7 +112,7 @@ public class BookingControllerTest {
 
     @Test
     public void testGetBookingsForOwner() throws Exception {
-        when(bookingController.getBookingsForOwner(1l, "ALL", 0, 20))
+        when(bookingController.getBookingsForOwner(1L, "ALL", 0, 20))
                 .thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings/owner")
