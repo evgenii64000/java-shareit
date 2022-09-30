@@ -17,12 +17,6 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public String handleOccupiedException(final OccupiedException e) {
-        return e.getMessage();
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleWrongIdException(final WrongIdException e) {
         return e.getMessage();

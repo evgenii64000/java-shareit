@@ -173,6 +173,9 @@
 								<excludes>
 									<exclude>ru/practicum/shareit/requests/dto/ItemRequestMapper.class</exclude>
 								</excludes>
+								<excludes>
+									<exclude>ru/practicum/shareit/exceptions/ErrorHandler.class</exclude>
+								</excludes>
 								<rules>
 									<rule>
 										<element>BUNDLE</element>
