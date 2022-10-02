@@ -111,16 +111,6 @@ public class ItemRequestServiceImplTest {
     }
 
     @Test
-    public void testGetUsersRequestsWrongParam() {
-        try {
-            userDto = userService.create(userDto);
-            requestService.getUsersRequests(userDto.getId(), -5, -5);
-        } catch (Exception e) {
-            Assertions.assertEquals("Неправильные параметры запроса", e.getMessage());
-        }
-    }
-
-    @Test
     public void testGetRequest() {
         userDto = userService.create(userDto);
         requestDto = requestService.createRequest(userDto.getId(), requestDto);

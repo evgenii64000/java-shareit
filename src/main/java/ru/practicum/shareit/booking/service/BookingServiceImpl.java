@@ -118,9 +118,6 @@ public class BookingServiceImpl implements BookingService {
         if (user.isEmpty()) {
             throw new NotFoundException("Пользователь с таким id не найден");
         }
-        if (from < 0 || size < 0) {
-            throw new WrongParameterException("Неправильные параметры запроса");
-        }
         Page<Booking> bookings;
         LocalDateTime now = LocalDateTime.now().withNano(0);
         try {
@@ -161,9 +158,6 @@ public class BookingServiceImpl implements BookingService {
         Optional<User> owner = userRepository.findById(userId);
         if (owner.isEmpty()) {
             throw new NotFoundException("Пользователь с таким id не найден");
-        }
-        if (from < 0 || size < 0) {
-            throw new WrongParameterException("Неправильные параметры запроса");
         }
         Page<Booking> bookings;
         LocalDateTime now = LocalDateTime.now().withNano(0);

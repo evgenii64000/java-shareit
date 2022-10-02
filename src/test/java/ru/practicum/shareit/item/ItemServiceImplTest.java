@@ -210,16 +210,6 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    public void testGetUserItemsWrongParam() {
-        try {
-            userDto = userService.create(userDto);
-            itemService.getUserItems(userDto.getId(), -10, -10);
-        } catch (Exception e) {
-            Assertions.assertEquals("Неправильные параметры запроса", e.getMessage());
-        }
-    }
-
-    @Test
     public void testFindItems() {
         userDto = userService.create(userDto);
         itemDto = itemService.create(userDto.getId(), itemDto);
@@ -228,15 +218,6 @@ public class ItemServiceImplTest {
         assertThat(items.get(0).getName(), equalTo(itemDto.getName()));
         assertThat(items.get(0).getDescription(), equalTo(itemDto.getDescription()));
         assertThat(items.get(0).getAvailable(), equalTo(itemDto.getAvailable()));
-    }
-
-    @Test
-    public void testFindItemsParam() {
-        try {
-            itemService.findItems("test", 0, 5);
-        } catch (Exception e) {
-            Assertions.assertEquals("Неправильные параметры запроса", e.getMessage());
-        }
     }
 
     @Test

@@ -136,9 +136,6 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("Пользователь с таким id не найден");
         }
         User owner = userOwner.get();
-        if (from < 0 || size < 0) {
-            throw new WrongParameterException("Неправильные параметры запроса");
-        }
         LocalDateTime now = LocalDateTime.now();
         Page<Item> items = itemRepository.findAllByOwner(owner, PageRequest.of(from / size, size));
         List<ItemDtoWithBooking> result = new ArrayList<>();
@@ -168,9 +165,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> findItems(String text, Integer from, Integer size) {
-        if (from < 0 || size < 0) {
-            throw new WrongParameterException("Неправильные параметры запроса");
-        }
         if (text.isBlank()) {
             return Collections.emptyList();
         } else {

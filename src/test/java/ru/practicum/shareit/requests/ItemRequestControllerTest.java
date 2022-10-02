@@ -1,15 +1,13 @@
 package ru.practicum.shareit.requests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.requests.dto.ItemRequestDto;
 import ru.practicum.shareit.requests.service.ItemRequestService;
 
@@ -24,26 +22,21 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(ItemRequestController.class)
+@AutoConfigureMockMvc
 public class ItemRequestControllerTest {
 
-    private ItemRequestController requestController;
-    @Mock
+    @MockBean
     private ItemRequestService requestService;
     @Autowired
     ObjectMapper mapper = new ObjectMapper();
+    @Autowired
     private MockMvc mvc;
 
     private ItemRequestDto requestDto = ItemRequestDto.builder()
             .id(1L)
             .description("testDescription")
             .build();
-
-    @BeforeEach
-    void setUp() {
-        requestController = new ItemRequestController(requestService);
-        mvc = MockMvcBuilders.standaloneSetup(requestController).build();
-    }
 
     @Test
     public void testPostRequest() throws Exception {

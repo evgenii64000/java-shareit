@@ -378,20 +378,6 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void testGetBookingsForUserWrongParam() {
-        try {
-            owner = userService.create(owner);
-            booker = userService.create(booker);
-            itemDto = itemService.create(owner.getId(), itemDto);
-            bookingDtoFront.setItemId(itemDto.getId());
-            bookingDto = bookingService.createBooking(bookingDtoFront, booker.getId());
-            bookingService.getBookingsForUser(booker.getId(), "ALL", -5, -5);
-        } catch (Exception e) {
-            Assertions.assertEquals("Неправильные параметры запроса", e.getMessage());
-        }
-    }
-
-    @Test
     public void testGetBookingsForUserUnknownState() {
         try {
             owner = userService.create(owner);
@@ -489,20 +475,6 @@ public class BookingServiceImplTest {
             bookingService.getBookingsForOwner(200L, "ALL", 0, 5);
         } catch (Exception e) {
             Assertions.assertEquals("Пользователь с таким id не найден", e.getMessage());
-        }
-    }
-
-    @Test
-    public void testGetBookingsForOwnerWrongParam() {
-        try {
-            owner = userService.create(owner);
-            booker = userService.create(booker);
-            itemDto = itemService.create(owner.getId(), itemDto);
-            bookingDtoFront.setItemId(itemDto.getId());
-            bookingDto = bookingService.createBooking(bookingDtoFront, booker.getId());
-            bookingService.getBookingsForOwner(owner.getId(), "ALL", -5, -5);
-        } catch (Exception e) {
-            Assertions.assertEquals("Неправильные параметры запроса", e.getMessage());
         }
     }
 

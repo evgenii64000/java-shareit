@@ -5,7 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.exceptions.WrongParameterException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -74,9 +73,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new NotFoundException("Пользователь с таким id не найден");
         }
         User user = userRequestor.get();
-        if (from < 0 || size < 0) {
-            throw new WrongParameterException("Неправильные параметры запроса");
-        }
         return requestRepository.findAllByRequestorNot(user, PageRequest.of(from / size, size,
                         Sort.by("created").descending())).stream()
                 .map(request -> ItemRequestMapper.toDtoRequest(request))
