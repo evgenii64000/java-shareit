@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "requests")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -21,9 +22,9 @@ public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
-    @Column(name = "name")
-    private String name;
+    private Long id;
+    @Column(name = "description")
+    private String description;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requestor_id", referencedColumnName = "id")
     private User requestor;

@@ -161,6 +161,13 @@
 								<goal>check</goal>
 							</goals>
 							<configuration>
+								<excludes>
+									<exclude>ru/practicum/shareit/booking/dto/BookingMapper.class</exclude>
+									<exclude>ru/practicum/shareit/item/dto/ItemMapper.class</exclude>
+									<exclude>ru/practicum/shareit/item/dto/CommentMapper.class</exclude>
+									<exclude>ru/practicum/shareit/requests/dto/ItemRequestMapper.class</exclude>
+									<exclude>ru/practicum/shareit/exceptions/ErrorHandler.class</exclude>
+								</excludes>
 								<rules>
 									<rule>
 										<element>BUNDLE</element>

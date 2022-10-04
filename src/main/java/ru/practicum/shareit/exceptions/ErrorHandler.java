@@ -17,12 +17,6 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public String handleOccupiedException(final OccupiedException e) {
-        return e.getMessage();
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleWrongIdException(final WrongIdException e) {
         return e.getMessage();
@@ -55,6 +49,12 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleWrongStatusException(final WrongStatusException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleWrongParameterException(final WrongParameterException e) {
         return e.getMessage();
     }
 }

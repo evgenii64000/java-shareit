@@ -1,6 +1,9 @@
 package ru.practicum.shareit.booking.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
@@ -110,30 +113,35 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Collection<BookingDto> getBookingsForUser(Long userId, String state) {
+    public Collection<BookingDto> getBookingsForUser(Long userId, String state, Integer from, Integer size) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new NotFoundException("Пользователь с таким id не найден");
         }
-        List<Booking> bookings;
+        Page<Booking> bookings;
         LocalDateTime now = LocalDateTime.now().withNano(0);
         try {
             switch (BookingState.valueOf(state)) {
                 case PAST:
-                    bookings = bookingRepository.findAllByBookerIdPast(userId, now);
+                    bookings = bookingRepository.findAllByBookerIdPast(userId, now,
+                            PageRequest.of(from / size, size, Sort.by("start_time").descending()));
                     break;
                 case FUTURE:
-                    bookings = bookingRepository.findAllByBookerIdFuture(userId, now);
+                    bookings = bookingRepository.findAllByBookerIdFuture(userId, now,
+                            PageRequest.of(from / size, size, Sort.by("start_time").descending()));
                     break;
                 case CURRENT:
-                    bookings = bookingRepository.findAllByBookerIdCurrent(userId, now);
+                    bookings = bookingRepository.findAllByBookerIdCurrent(userId, now,
+                            PageRequest.of(from / size, size, Sort.by("start_time").descending()));
                     break;
                 case WAITING:
                 case REJECTED:
-                    bookings = bookingRepository.findAllByBookerIdAndStatus(userId, state);
+                    bookings = bookingRepository.findAllByBookerIdAndStatus(userId, state,
+                            PageRequest.of(from / size, size, Sort.by("start_time").descending()));
                     break;
                 default:
-                    bookings = bookingRepository.findAllByBookerId(userId);
+                    bookings = bookingRepository.findAllByBookerId(userId,
+                            PageRequest.of(from / size, size, Sort.by("start_time").descending()));
                     break;
             }
             return bookings.stream()
@@ -146,30 +154,35 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Collection<BookingDto> getBookingsForOwner(Long userId, String state) {
+    public Collection<BookingDto> getBookingsForOwner(Long userId, String state, Integer from, Integer size) {
         Optional<User> owner = userRepository.findById(userId);
         if (owner.isEmpty()) {
             throw new NotFoundException("Пользователь с таким id не найден");
         }
-        List<Booking> bookings;
+        Page<Booking> bookings;
         LocalDateTime now = LocalDateTime.now().withNano(0);
         try {
             switch (BookingState.valueOf(state)) {
                 case PAST:
-                    bookings = bookingRepository.findAllByOwnerPast(userId, now);
+                    bookings = bookingRepository.findAllByOwnerPast(userId, now,
+                            PageRequest.of(from / size, size, Sort.by("start_time").descending()));
                     break;
                 case FUTURE:
-                    bookings = bookingRepository.findAllByOwnerFuture(userId, now);
+                    bookings = bookingRepository.findAllByOwnerFuture(userId, now,
+                            PageRequest.of(from / size, size, Sort.by("start_time").descending()));
                     break;
                 case CURRENT:
-                    bookings = bookingRepository.findAllByOwnerCurrent(userId, now);
+                    bookings = bookingRepository.findAllByOwnerCurrent(userId, now,
+                            PageRequest.of(from / size, size, Sort.by("start_time").descending()));
                     break;
                 case WAITING:
                 case REJECTED:
-                    bookings = bookingRepository.findAllByOwnerStatus(userId, state);
+                    bookings = bookingRepository.findAllByOwnerStatus(userId, state,
+                            PageRequest.of(from / size, size, Sort.by("start_time").descending()));
                     break;
                 default:
-                    bookings = bookingRepository.findByOwnerId(userId);
+                    bookings = bookingRepository.findByOwnerId(userId,
+                            PageRequest.of(from / size, size, Sort.by("start_time").descending()));
             }
             return bookings.stream()
                     .map(booking -> BookingMapper.toBookingDto(booking, booking.getItem(), booking.getBooker()))
