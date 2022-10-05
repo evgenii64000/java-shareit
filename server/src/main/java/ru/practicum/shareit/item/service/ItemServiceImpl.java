@@ -160,7 +160,7 @@ public class ItemServiceImpl implements ItemService {
             }
             result.add(ItemMapper.toItemDtoWithBooking(item, nextInfo, lastInfo, commentDtos));
         }
-        return result;
+        return result.stream().sorted(Comparator.comparing(ItemDtoWithBooking::getId)).collect(Collectors.toList());
     }
 
     @Override
