@@ -5,8 +5,6 @@ import lombok.*;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,8 +23,6 @@ public class Comment {
     @Column(name = "id")
     private Long id;
     @Column(name = "text")
-    @NotNull
-    @NotBlank
     private String text;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", referencedColumnName = "id")
@@ -35,6 +31,5 @@ public class Comment {
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
     @Column(name = "created")
-    @NotNull
     private LocalDateTime created;
 }

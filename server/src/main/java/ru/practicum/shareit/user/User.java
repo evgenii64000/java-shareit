@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * // TODO .
@@ -29,8 +26,5 @@ public class User {
     @Column(name = "name")
     private String name;
     @Column(name = "email")
-    @Email
-    @NotNull
-    @NotBlank
     private String email;
 }
